@@ -5,3 +5,12 @@ Question Answers:
 4. The screen looks more squashed. It is easier to make out the full shape of the sphere and squares.
 5. No, all squares look the same size despite being placed in different distances from the camera.
 6. No, the screen looks much less realistic than the perspective camera.
+
+Part 5 Questions:
+1. Objects further from the camera get smaller.
+2. Nothing, object size is kept the same to properly retain shape.
+3. Perspective camera since it somewhat simulates the effect of things looking smaller from a distance.
+4. FPS game should use a perspective camera since it is a first person POV, and perspective camera simulates our own vision. 
+   Technical Blueprint Software should use an ortho camera view to properly retain shape for structure design.
+   Strategy Games should probably use a Perspective Camera to see every structure properly.
+5. Retaining shape despite distance from camera, keeping shapes easily visible.
