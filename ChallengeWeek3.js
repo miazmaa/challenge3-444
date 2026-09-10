@@ -8,7 +8,11 @@ const swapKeys = new Set(["p", "o"]);
 
 window.addEventListener("keydown", (event) => {
     if (swapKeys.has(event.key)) {
-        activeCamera = activeCamera === camera ? orthoCamera : camera;
+        if (event.key == "p") {
+            activeCamera = camera;
+        } else if (event.key == "o") {
+            activeCamera = orthoCamera;
+        }
         controls.object = activeCamera;
         controls.update();
         renderer.render(scene, activeCamera);
