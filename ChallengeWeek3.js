@@ -4,8 +4,15 @@ import { OrbitControls } from "https://unpkg.com/three@0.179.1/examples/jsm/cont
 const container = document.getElementById("scene-container") || document.body;
 const pressedKeys = new Set();
 const cameraKeys = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "a", "s", "d"]);
+const swapKeys = new Set(["p", "o"]);
 
 window.addEventListener("keydown", (event) => {
+    if (swapKeys.has(event.key)) {
+        activeCamera = activeCamera === camera ? orthoCamera : camera;
+        controls.object = activeCamera;
+        controls.update();
+        renderer.render(scene, activeCamera);
+    }
     if (cameraKeys.has(event.key)) {
         pressedKeys.add(event.key);
         event.preventDefault();
@@ -23,9 +30,9 @@ window.addEventListener("keyup", (event) => {
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
 
-//const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-//camera.position.set(0, 5, 15);
-const camera =
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 5, 15);
+const orthoCamera =
     new THREE.OrthographicCamera(
     -10,
      10,
@@ -34,7 +41,11 @@ const camera =
      0.1,
      100
 );
-camera.position.set(0,5,15);
+orthoCamera.position.set(0,5,15);
+
+let activeCamera = camera;
+
+
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -43,7 +54,7 @@ renderer.domElement.style.display = "block";
 renderer.domElement.style.marginTop = "1rem";
 container.appendChild(renderer.domElement);
 
-const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(activeCamera, renderer.domElement);
 controls.enableDamping = true;
 controls.target.set(0, 1, 0);
 
@@ -52,16 +63,16 @@ const minZoomDistance = 4;
 const maxZoomDistance = 40;
 
 function zoomCamera(direction) {
-    const cameraOffset = camera.position.clone().sub(controls.target);
+    const cameraOffset = activeCamera.position.clone().sub(controls.target);
     const zoomDistance = THREE.MathUtils.clamp(
         cameraOffset.length() + direction * zoomStep,
         minZoomDistance,
         maxZoomDistance
     );
 
-    camera.position.copy(controls.target).add(cameraOffset.normalize().multiplyScalar(zoomDistance));
+    activeCamera.position.copy(controls.target).add(cameraOffset.normalize().multiplyScalar(zoomDistance));
     controls.update();
-    renderer.render(scene, camera);
+    renderer.render(scene, activeCamera);
 }
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -110,11 +121,11 @@ function resizeRenderer() {
     const width = Math.min(window.innerWidth * 0.9, 900);
     const height = 600;
     renderer.setSize(width, height);
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
+    activeCamera.aspect = width / height;
+    activeCamera.updateProjectionMatrix();
 }
 
 window.addEventListener("resize", resizeRenderer);
 resizeRenderer();
-renderer.render(scene, camera);
+renderer.render(scene, activeCamera);
 
